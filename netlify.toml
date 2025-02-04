@@ -1,0 +1,9 @@
+[build]
+command = "./build.sh"
+functions = "functions"
+publish = "public"
+
+[[redirects]]
+from = "/app/*"
+to = "/.netlify/functions/gmailsig/:splat"
+status = 200

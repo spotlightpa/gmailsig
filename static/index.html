@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gmail Signature Tool</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-gear p-2 min-h-screen flex justify-center font-mono">
+    <form
+      class="my-auto flex-grow"
+      action="/api/convert"
+      method="get"
+      target="_blank"
+    >
+      <div
+        class="mx-auto px-4 py-4 max-w-screen-sm rounded shadow bg-white space-y-4"
+      >
+        <h1 class="font-semibold">Email Signature Tool</h1>
+        <div class="flex space-x-1">
+          <a
+            class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#009edb] hover:bg-[#0cb4eb] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
+            href="/app/signature"
+          >
+            Log In
+          </a>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>

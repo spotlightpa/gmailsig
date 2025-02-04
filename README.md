@@ -1,6 +1,6 @@
 # Gmail Signatures [![GoDoc](https://godoc.org/github.com/spotlightpa/gmailsig?status.svg)](https://godoc.org/github.com/spotlightpa/gmailsig) [![Go Report Card](https://goreportcard.com/badge/github.com/spotlightpa/gmailsig)](https://goreportcard.com/report/github.com/spotlightpa/gmailsig)
 
-Set Gmail signatues for users
+Set Gmail signatures for users
 
 ## Installation
 
