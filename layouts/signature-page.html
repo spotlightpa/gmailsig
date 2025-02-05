@@ -1,6 +1,6 @@
 {{ define "body" }}
 <div class="my-8 w-full bg-white max-w-screen-md font-sans rounded shadow p-4">
-  <h2 class="text-2xl text-slate-500 font-bold">Gmail Signature</h2>
+  <h1 class="text-2xl text-slate-500 font-bold">Gmail Signature for {{ .Email }}</h1>
   {{ with .Signature }}
     <h2 class="mt-4 text-xl font-bold">Current Signature</h2>
     <div class="mt-2">

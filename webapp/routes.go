@@ -1,12 +1,14 @@
 package webapp
 
 import (
+	"errors"
 	"io/fs"
 	"net/http"
 	"path/filepath"
 	"time"
 
 	"github.com/carlmjohnson/requests"
+	"github.com/carlmjohnson/resperr"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/spotlightpa/gmailsig/layouts"
 	"github.com/spotlightpa/gmailsig/static"
@@ -76,7 +78,8 @@ func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 		ToJSON(&listRes).
 		Fetch(r.Context())
 	if err != nil {
-		app.replyHTMLErr(w, r, err)
+		app.replyHTMLErr(w, r,
+			resperr.WithCodeAndMessage(err, http.StatusBadGateway, "Bad response from Google"))
 		return
 	}
 
@@ -87,11 +90,15 @@ func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+	if sig == nil {
+		app.replyHTMLErr(w, r, errors.New("primary send-as alias not found for user"))
+		return
+	}
 	app.replyHTML(w, r, layouts.SignaturePage, struct {
-		Title     string
-		Signature string
+		Title, Email, Signature string
 	}{
 		Title:     "Set Signature",
+		Email:     sig.SendAsEmail,
 		Signature: sig.Signature,
 	})
 }
