@@ -54,27 +54,27 @@ func (app *appEnv) authRedirect(w http.ResponseWriter, r *http.Request, scopes .
 func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	var state string
 	if !app.getCookie(r, stateCookie, &state) {
-		app.replyErr(w, r, resperr.New(http.StatusUnauthorized, "no saved state"))
+		app.replyHTMLErr(w, r, resperr.New(http.StatusUnauthorized, "no saved state"))
 		return
 	}
 	app.deleteCookie(w, stateCookie)
 
 	var redirect url.URL
 	if !app.getCookie(r, redirectURLCookie, &redirect) {
-		app.replyErr(w, r, resperr.New(http.StatusUnauthorized, "no redirect"))
+		app.replyHTMLErr(w, r, resperr.New(http.StatusUnauthorized, "no redirect"))
 		return
 	}
 	app.deleteCookie(w, redirectURLCookie)
 
 	var scopes []string
 	if !app.getCookie(r, scopesCookie, &scopes) {
-		app.replyErr(w, r, resperr.New(http.StatusUnauthorized, "no scope"))
+		app.replyHTMLErr(w, r, resperr.New(http.StatusUnauthorized, "no scope"))
 		return
 	}
 	app.deleteCookie(w, scopesCookie)
 
 	if callbackState := r.FormValue("state"); state != callbackState {
-		app.replyErr(w, r, resperr.New(
+		app.replyHTMLErr(w, r, resperr.New(
 			http.StatusBadRequest,
 			"token %q != %q",
 			state, callbackState))
@@ -83,7 +83,7 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	conf := app.googleConfig(scopes...)
 	tok, err := conf.Exchange(r.Context(), r.FormValue("code"))
 	if err != nil {
-		app.replyErr(w, r, err)
+		app.replyHTMLErr(w, r, err)
 		return
 	}
 	app.setCookie(w, tokenCookie, &tok)

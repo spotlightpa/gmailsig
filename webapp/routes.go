@@ -74,7 +74,7 @@ func (app *appEnv) signature(w http.ResponseWriter, r *http.Request) {
 		ToJSON(&listRes).
 		Fetch(r.Context())
 	if err != nil {
-		app.replyErr(w, r, err)
+		app.replyHTMLErr(w, r, err)
 		return
 	}
 

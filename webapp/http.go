@@ -7,10 +7,13 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/gob"
+	"fmt"
 	"net/http"
+	"text/template"
 
 	"github.com/carlmjohnson/resperr"
 	"github.com/getsentry/sentry-go"
+	"github.com/spotlightpa/gmailsig/layouts"
 )
 
 func (app *appEnv) logRoute(h http.Handler) http.Handler {
@@ -135,4 +138,44 @@ func (app *appEnv) getCookie(r *http.Request, name string, v interface{}) bool {
 	dec := gob.NewDecoder(bytes.NewReader(b))
 	err = dec.Decode(v)
 	return err == nil
+}
+
+func (app *appEnv) replyHTML(w http.ResponseWriter, r *http.Request, t *template.Template, data any) {
+	var buf bytes.Buffer
+	if err := t.Execute(&buf, data); err != nil {
+		app.logErr(r.Context(), err)
+		app.replyHTMLErr(w, r, err)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	if _, err := buf.WriteTo(w); err != nil {
+		app.logErr(r.Context(), err)
+		return
+	}
+}
+
+func (app *appEnv) replyHTMLErr(w http.ResponseWriter, r *http.Request, err error) {
+	app.logErr(r.Context(), err)
+	code := resperr.StatusCode(err)
+	var buf bytes.Buffer
+	if err := layouts.Error.Execute(&buf, struct {
+		Title      string
+		Status     string
+		StatusCode int
+		Message    string
+	}{
+		Title:      fmt.Sprintf("Error %d: %s", code, http.StatusText(code)),
+		Status:     http.StatusText(code),
+		StatusCode: code,
+		Message:    resperr.UserMessage(err),
+	}); err != nil {
+		app.logErr(r.Context(), err)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(code)
+	if _, err := buf.WriteTo(w); err != nil {
+		app.logErr(r.Context(), err)
+		return
+	}
 }

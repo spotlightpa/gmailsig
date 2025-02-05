@@ -17,4 +17,4 @@ func makeTemplate(names ...string) *template.Template {
 			ParseFS(FS, names...))
 }
 
-var Error = makeTemplate("error.html")
+var Error = makeTemplate("baseof.html", "error.html")
