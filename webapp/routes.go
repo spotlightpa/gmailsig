@@ -1,7 +1,6 @@
 package webapp
 
 import (
-	"encoding/json"
 	"io/fs"
 	"net/http"
 	"path/filepath"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/carlmjohnson/requests"
 	sentryhttp "github.com/getsentry/sentry-go/http"
+	"github.com/spotlightpa/gmailsig/layouts"
 	"github.com/spotlightpa/gmailsig/static"
 	"google.golang.org/api/gmail/v1"
 )
@@ -79,10 +79,18 @@ func (app *appEnv) signature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
-	enc := json.NewEncoder(w)
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", "  ")
-	enc.Encode(&listRes)
+	var sig *gmail.SendAs
+	for _, res := range listRes.SendAs {
+		if res.IsPrimary {
+			sig = res
+			break
+		}
+	}
+	app.replyHTML(w, r, layouts.SignaturePage, struct {
+		Title     string
+		Signature string
+	}{
+		Title:     "Set Signature",
+		Signature: sig.Signature,
+	})
 }

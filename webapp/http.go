@@ -8,8 +8,8 @@ import (
 	"encoding/base64"
 	"encoding/gob"
 	"fmt"
+	"html/template"
 	"net/http"
-	"text/template"
 
 	"github.com/carlmjohnson/resperr"
 	"github.com/getsentry/sentry-go"

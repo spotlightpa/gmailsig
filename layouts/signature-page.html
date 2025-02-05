@@ -1,0 +1,11 @@
+{{ define "body" }}
+<div class="my-8 w-full bg-white max-w-screen-md font-sans rounded shadow p-4">
+  <h1 class="text-xl font-bold">Current Signature</h1>
+  <div class="flex gap-8">
+    <textarea class="font-mono">
+      {{ .Signature }}
+    </textarea>
+    <iframe srcdoc="{{ .Signature }}"></iframe>
+  </div>
+</div>
+{{ end }}

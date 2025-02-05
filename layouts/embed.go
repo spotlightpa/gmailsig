@@ -2,7 +2,7 @@ package layouts
 
 import (
 	"embed"
-	"text/template"
+	"html/template"
 )
 
 //go:embed *.html
@@ -17,4 +17,7 @@ func makeTemplate(names ...string) *template.Template {
 			ParseFS(FS, names...))
 }
 
-var Error = makeTemplate("baseof.html", "error.html")
+var (
+	Error         = makeTemplate("baseof.html", "error.html")
+	SignaturePage = makeTemplate("baseof.html", "signature-page.html")
+)
