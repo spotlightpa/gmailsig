@@ -57,13 +57,19 @@ func (app *appEnv) routes() http.Handler {
 	mux.HandleFunc("GET /app/sentrycheck", app.sentryCheck)
 	mux.HandleFunc("GET /app/signature", app.signaturePage)
 
-	route := sentryhttp.
+	// Middleware, inside out
+	var route http.Handler = mux
+	route = timeoutMiddleware(9*time.Second, route)
+	route = versionMiddleware(route)
+	const oneMB = 1 << 20
+	route = http.MaxBytesHandler(route, oneMB)
+	route = sentryhttp.
 		New(sentryhttp.Options{
 			WaitForDelivery: true,
 			Timeout:         5 * time.Second,
 			Repanic:         !app.isLambda(),
 		}).
-		Handle(mux)
+		Handle(route)
 	route = app.logRoute(route)
 	return route
 }

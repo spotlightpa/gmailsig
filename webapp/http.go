@@ -10,8 +10,10 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/carlmjohnson/resperr"
+	"github.com/earthboundkid/versioninfo/v2"
 	"github.com/getsentry/sentry-go"
 	"github.com/spotlightpa/gmailsig/layouts"
 )
@@ -178,4 +180,20 @@ func (app *appEnv) replyHTMLErr(w http.ResponseWriter, r *http.Request, err erro
 		app.logErr(r.Context(), err)
 		return
 	}
+}
+
+func timeoutMiddleware(timeout time.Duration, h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, stop := context.WithTimeout(r.Context(), timeout)
+		defer stop()
+		h.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func versionMiddleware(next http.Handler) http.Handler {
+	version := versioninfo.Short()
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Gmail-Sig-Version", version)
+		next.ServeHTTP(w, r)
+	})
 }
