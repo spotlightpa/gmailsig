@@ -48,8 +48,9 @@ func (app *appEnv) routes() http.Handler {
 			return nil
 		})
 	}
-	mux.HandleFunc("GET /app/signature", app.signature)
+	mux.HandleFunc("GET /app/signature", app.signaturePage)
 	mux.HandleFunc("GET /app/auth-callback", app.authCallback)
+	mux.HandleFunc("POST /app/logout", app.postLogout)
 
 	route := sentryhttp.
 		New(sentryhttp.Options{
@@ -62,7 +63,7 @@ func (app *appEnv) routes() http.Handler {
 	return route
 }
 
-func (app *appEnv) signature(w http.ResponseWriter, r *http.Request) {
+func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 	cl := app.googleClient(r, gmail.GmailSettingsBasicScope)
 	if cl == nil {
 		app.authRedirect(w, r, gmail.GmailSettingsBasicScope)
@@ -93,4 +94,12 @@ func (app *appEnv) signature(w http.ResponseWriter, r *http.Request) {
 		Title:     "Set Signature",
 		Signature: sig.Signature,
 	})
+}
+
+func (app *appEnv) postLogout(w http.ResponseWriter, r *http.Request) {
+	app.deleteCookie(w, tokenCookie)
+	app.deleteCookie(w, stateCookie)
+	app.deleteCookie(w, redirectURLCookie)
+	app.deleteCookie(w, scopesCookie)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
