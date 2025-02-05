@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/fs"
 	"net/http"
+	"path/filepath"
 	"time"
 
 	"github.com/carlmjohnson/requests"
@@ -42,7 +43,7 @@ func (app *appEnv) routes() http.Handler {
 			}
 			pat := "GET /" + path
 			mux.HandleFunc(pat, func(w http.ResponseWriter, r *http.Request) {
-				http.ServeFile(w, r, path)
+				http.ServeFile(w, r, filepath.Join("static", path))
 			})
 			return nil
 		})
