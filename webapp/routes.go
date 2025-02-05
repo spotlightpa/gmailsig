@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"errors"
+	"io"
 	"io/fs"
 	"net/http"
 	"path/filepath"
@@ -50,9 +51,11 @@ func (app *appEnv) routes() http.Handler {
 			return nil
 		})
 	}
-	mux.HandleFunc("GET /app/signature", app.signaturePage)
 	mux.HandleFunc("GET /app/auth-callback", app.authCallback)
+	mux.HandleFunc("GET /app/healthcheck", app.healthCheck)
 	mux.HandleFunc("POST /app/logout", app.postLogout)
+	mux.HandleFunc("GET /app/sentrycheck", app.sentryCheck)
+	mux.HandleFunc("GET /app/signature", app.signaturePage)
 
 	route := sentryhttp.
 		New(sentryhttp.Options{
@@ -109,4 +112,15 @@ func (app *appEnv) postLogout(w http.ResponseWriter, r *http.Request) {
 	app.deleteCookie(w, redirectURLCookie)
 	app.deleteCookie(w, scopesCookie)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (app *appEnv) healthCheck(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	io.WriteString(w, "OK")
+}
+
+func (app *appEnv) sentryCheck(w http.ResponseWriter, r *http.Request) {
+	app.logErr(r.Context(), errors.New("sentry check"))
+	w.Header().Set("Content-Type", "text/plain")
+	io.WriteString(w, "OK")
 }
