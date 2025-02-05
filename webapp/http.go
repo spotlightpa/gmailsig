@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/gob"
 	"fmt"
@@ -54,6 +55,7 @@ const (
 	stateCookie       = "google-state"
 	redirectURLCookie = "google-redirect-url"
 	scopesCookie      = "google-scopes"
+	csrfCookie        = "csrf"
 )
 
 func (app *appEnv) setCookie(w http.ResponseWriter, name string, v interface{}) {
@@ -196,4 +198,12 @@ func versionMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Gmail-Sig-Version", version)
 		next.ServeHTTP(w, r)
 	})
+}
+
+func (app *appEnv) isCSRFOkay(r *http.Request, userValue string) bool {
+	var want string
+	if !app.getCookie(r, csrfCookie, &want){
+		return false
+	}
+	return subtle.ConstantTimeCompare([]byte(want), []byte(userValue)) == 1
 }

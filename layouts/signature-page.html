@@ -9,12 +9,20 @@
   {{ end }}
   <h2 class="mt-4 text-xl font-bold">Update Signature</h2>
   <div class="mt-2">
-    <button
-      class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#009edb] hover:bg-[#0cb4eb] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
-      type="button"
-    >
-      Set signature
-    </button>
+    <form  action="/app/signature" method="post">
+      <input type="hidden" name="csrf" value="{{ .CSRF }}" />
+      <input type="hidden" name="email" value="{{ .Email }}" />
+
+      <label>
+        Temporary debug signature field:
+        <input name="signature" value="{{ .Signature }}" />
+      </label>
+      <button
+        class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#009edb] hover:bg-[#0cb4eb] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
+      >
+        Set signature
+      </button>
+    </form>
   </div>
   <form class="mt-8" action="/app/logout" method="post">
     <button

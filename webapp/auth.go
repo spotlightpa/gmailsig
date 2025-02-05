@@ -86,6 +86,8 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 		app.replyHTMLErr(w, r, err)
 		return
 	}
+	csrf := rand.Text()
+	app.setCookie(w, csrfCookie, csrf)
 	app.setCookie(w, tokenCookie, &tok)
 	http.Redirect(w, r, redirect.String(), http.StatusSeeOther)
 }
