@@ -8,7 +8,6 @@ import (
 	"github.com/carlmjohnson/resperr"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-	"google.golang.org/api/gmail/v1"
 )
 
 func (app *appEnv) googleClient(r *http.Request, scopes ...string) *http.Client {
@@ -43,6 +42,8 @@ func (app *appEnv) authRedirect(w http.ResponseWriter, r *http.Request, scopes .
 	stateToken := rand.Text()
 	app.setCookie(w, stateCookie, stateToken)
 
+	app.setCookie(w, scopesCookie, scopes)
+
 	conf := app.googleConfig(scopes...)
 	// Redirect user to Google's consent page to ask for permission
 	url := conf.AuthCodeURL(stateToken)
@@ -65,6 +66,13 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	}
 	app.deleteCookie(w, redirectURLCookie)
 
+	var scopes []string
+	if !app.getCookie(r, scopesCookie, &scopes) {
+		app.replyErr(w, r, resperr.New(http.StatusUnauthorized, "no scope"))
+		return
+	}
+	app.deleteCookie(w, scopesCookie)
+
 	if callbackState := r.FormValue("state"); state != callbackState {
 		app.replyErr(w, r, resperr.New(
 			http.StatusBadRequest,
@@ -72,7 +80,7 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 			state, callbackState))
 		return
 	}
-	conf := app.googleConfig(gmail.GmailSettingsBasicScope)
+	conf := app.googleConfig(scopes...)
 	tok, err := conf.Exchange(r.Context(), r.FormValue("code"))
 	if err != nil {
 		app.replyErr(w, r, err)

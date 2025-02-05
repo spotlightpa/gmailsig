@@ -48,6 +48,7 @@ const (
 	tokenCookie       = "google-token"
 	stateCookie       = "google-state"
 	redirectURLCookie = "google-redirect-url"
+	scopesCookie      = "google-scopes"
 )
 
 func (app *appEnv) setCookie(w http.ResponseWriter, name string, v interface{}) {
