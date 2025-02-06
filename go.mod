@@ -12,6 +12,7 @@ require (
 	github.com/carlmjohnson/resperr v0.22.0
 	github.com/earthboundkid/versioninfo/v2 v2.24.1
 	github.com/getsentry/sentry-go v0.31.1
+	github.com/go-chi/chi/v5 v5.2.1
 	github.com/gorilla/schema v1.4.1
 	golang.org/x/oauth2 v0.25.0
 	google.golang.org/api v0.114.0

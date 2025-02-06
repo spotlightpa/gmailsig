@@ -16,21 +16,12 @@ import (
 	"github.com/carlmjohnson/resperr"
 	"github.com/earthboundkid/versioninfo/v2"
 	"github.com/getsentry/sentry-go"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spotlightpa/gmailsig/layouts"
 )
 
 func (app *appEnv) logRoute(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		url := r.URL.Path
-		if r.URL.RawQuery != "" {
-			q := r.URL.Query()
-			q.Del("code")
-			q.Del("state")
-			url = url + "?" + q.Encode()
-		}
-		logger.Printf("[%s] %q - %s", r.Method, url, r.RemoteAddr)
-		h.ServeHTTP(w, r)
-	})
+	return middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: logger})(h)
 }
 
 func (app *appEnv) replyErr(w http.ResponseWriter, r *http.Request, err error) {
