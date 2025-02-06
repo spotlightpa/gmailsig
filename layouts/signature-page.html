@@ -1,3 +1,21 @@
+{{ define "extra-head" }}
+<script type="module">
+  import Alpine from "https://unpkg.com/alpinejs@3.14.8/dist/module.esm.min.js";
+  function fetcher(){
+    return {
+      url: '',
+      buildURL() {
+        this.url = `/app/build-signature?${new URLSearchParams(new FormData(this.$refs.form))}`;
+      },
+      init() {
+        this.buildURL();
+      }
+    }
+  }
+  Alpine.data('fetcher', fetcher);
+  Alpine.start();
+</script>
+{{ end }}
 {{ define "body" }}
 <div class="my-8 w-full bg-white max-w-screen-md font-sans rounded shadow p-4">
   <h1 class="text-2xl text-slate-500 font-bold">Gmail Signature for {{ .Email }}</h1>
@@ -8,8 +26,16 @@
     </div>
   {{ end }}
   <h2 class="mt-4 text-xl font-bold">Update Signature</h2>
-  <div class="mt-2">
-    <form  action="/app/signature" method="post">
+  <div class="mt-2" x-data="fetcher">
+    <div class="mt-2" :class="{ 'hidden': !url }">
+      <iframe class="border border-black w-[475px] h-[300px] shadow" :src="url"></iframe>
+      <span x-text="url"></span>
+    </div>
+    <form x-ref="form" @input.debounce="buildURL">
+      <input name="email" value="{{ .Email }}" />
+
+    </form>
+    <form action="/app/signature" method="post">
       <input type="hidden" name="csrf" value="{{ .CSRF }}" />
       <input type="hidden" name="email" value="{{ .Email }}" />
 
