@@ -1,54 +1,152 @@
 {{ define "extra-head" }}
 <script type="module">
   import Alpine from "https://unpkg.com/alpinejs@3.14.8/dist/module.esm.min.js";
-  function fetcher(){
+  function fetcher() {
     return {
-      url: '',
+      url: "",
       buildURL() {
-        this.url = `/app/build-signature?${new URLSearchParams(new FormData(this.$refs.form))}`;
+        let params = new URLSearchParams(new FormData(this.$refs.form));
+        params.delete("csrf");
+        this.url = `/app/build-signature?${params}`;
       },
       init() {
         this.buildURL();
-      }
-    }
+      },
+    };
   }
-  Alpine.data('fetcher', fetcher);
+  Alpine.data("fetcher", fetcher);
   Alpine.start();
 </script>
 {{ end }}
 {{ define "body" }}
-<div class="my-8 w-full bg-white max-w-screen-md font-sans rounded shadow p-4">
-  <h1 class="text-2xl text-slate-500 font-bold">Gmail Signature for {{ .Email }}</h1>
+<div
+  class="my-8 w-full bg-white max-w-screen-lg font-sans rounded shadow p-4"
+  x-data="fetcher"
+>
+  <h1 class="text-2xl text-slate-500 font-bold">
+    Gmail Signature for {{ .Email }}
+  </h1>
   {{ with .Signature }}
-    <h2 class="mt-4 text-xl font-bold">Current Signature</h2>
-    <div class="mt-2">
-      <iframe class="border border-black w-[475px] h-[300px] shadow" srcdoc="{{ . }}"></iframe>
-    </div>
+  <h2 class="mt-4 text-xl font-bold">Current Signature</h2>
+  <div class="mt-2">
+    <iframe
+      class="border border-black w-[475px] h-[300px] shadow"
+      srcdoc="{{ . }}"
+    ></iframe>
+  </div>
   {{ end }}
-  <h2 class="mt-4 text-xl font-bold">Update Signature</h2>
-  <div class="mt-2" x-data="fetcher">
-    <div class="mt-2" :class="{ 'hidden': !url }">
-      <iframe class="border border-black w-[475px] h-[300px] shadow" :src="url"></iframe>
-      <span x-text="url"></span>
-    </div>
-    <form x-ref="form" @input.debounce="buildURL">
-      <input name="email" value="{{ .Email }}" />
-
-    </form>
-    <form action="/app/signature" method="post">
-      <input type="hidden" name="csrf" value="{{ .CSRF }}" />
-      <input type="hidden" name="email" value="{{ .Email }}" />
-
-      <label>
-        Temporary debug signature field:
-        <input name="signature" value="{{ .Signature }}" />
-      </label>
-      <button
-        class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#009edb] hover:bg-[#0cb4eb] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
+  <div class="mt-4 flex flex-wrap gap-8 justify-stretch">
+    <div class="flex-1 min-w-content">
+      <h2 class="text-xl font-bold">Update Signature</h2>
+      <form
+        x-ref="form"
+        action="/app/signature"
+        method="post"
+        @input.debounce="buildURL"
       >
-        Set signature
-      </button>
-    </form>
+        <input type="hidden" name="account" value="{{ .Email }}" />
+        <input type="hidden" name="csrf" value="{{ .CSRF }}" />
+        <div class="flex flex-col gap-2">
+          <label>
+            <p class="font-bold">Name</p>
+            <input
+              name="name"
+              value="TODO"
+              placeholder="William Penn"
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <label>
+            <p class="font-bold">Email</p>
+            <input
+              name="email"
+              value="{{ .Email }}"
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <label>
+            <p class="font-bold">Almanack Photo ID</p>
+            <p>link here</p>
+            <input
+              name="photoid"
+              value=""
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <label>
+            <p class="font-bold">Role</p>
+            <input
+              name="role"
+              value=""
+              placeholder="Reporter, Editor"
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <label>
+            <p class="font-bold">Pronouns</p>
+            <input
+              name="pronouns"
+              value=""
+              placeholder="he/him, she/her, they/them"
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <label>
+            <p class="font-bold">Twitter</p>
+            <input
+              name="twitter"
+              value=""
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <label>
+            <p class="font-bold">Bluesky</p>
+            <input
+              name="bluesky"
+              value=""
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <label>
+            <p class="font-bold">Telephone</p>
+            <input
+              name="telephone"
+              value=""
+              placeholder="(215) 555-1234"
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <label>
+            <p class="font-bold">Signal</p>
+            <input
+              name="signal"
+              value=""
+              placeholder="(215) 555-1234"
+              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+            />
+          </label>
+          <div class="pt-2">
+            <button
+              class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#009edb] hover:bg-[#0cb4eb] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
+            >
+              Set signature
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="flex-1 min-w-content">
+      <div class="mt-2">
+        <div class="mt-2" :class="{ 'hidden': !url }">
+          <iframe
+            class="border border-black w-[475px] h-[325px] shadow"
+            :src="url"
+          >Loading…</iframe>
+        </div>
+      </div>
+
+
+    </div>
   </div>
   <form class="mt-8" action="/app/logout" method="post">
     <button
