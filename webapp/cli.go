@@ -64,8 +64,6 @@ Options:
 	return nil
 }
 
-var logger = log.Default()
-
 type appEnv struct {
 	port              int
 	oauthClientID     string
