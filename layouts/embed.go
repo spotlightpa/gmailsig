@@ -18,6 +18,7 @@ func makeTemplate(names ...string) *template.Template {
 }
 
 var (
-	Error         = makeTemplate("baseof.html", "error.html")
-	SignaturePage = makeTemplate("baseof.html", "signature-page.html")
+	Error          = makeTemplate("baseof.html", "error.html")
+	SignaturePage  = makeTemplate("baseof.html", "signature-page.html")
+	BuildSignature = makeTemplate("build-signature.html")
 )

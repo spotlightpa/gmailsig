@@ -54,6 +54,7 @@ func (app *appEnv) routes() http.Handler {
 		})
 	}
 	mux.HandleFunc("GET /app/auth-callback", app.authCallback)
+	mux.HandleFunc("GET /app/build-signature", app.buildSignature)
 	mux.HandleFunc("GET /app/healthcheck", app.healthCheck)
 	mux.HandleFunc("POST /app/logout", app.postLogout)
 	mux.HandleFunc("GET /app/sentrycheck", app.sentryCheck)
@@ -183,4 +184,32 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, "/app/signature", http.StatusSeeOther)
+}
+
+func (app *appEnv) buildSignature(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Name            string `schema:"name"`
+		Email           string `schema:"email"`
+		PhotoID         string `schema:"photoid"`
+		ImageURL        string
+		Role            string `schema:"role"`
+		Pronouns        string `schema:"pronouns"`
+		Twitter         string `schema:"twitter"`
+		Bluesky         string `schema:"bluesky"`
+		Telephone       string `schema:"telephone"`
+		TelephoneDigits string
+		Signal          string `schema:"signal"`
+		SignalDigits    string
+	}
+	if err := r.ParseForm(); err != nil {
+		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+	}
+	decoder := schema.NewDecoder()
+	decoder.IgnoreUnknownKeys(true)
+	if err := decoder.Decode(&data, r.Form); err != nil {
+		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	app.replyHTML(w, r, layouts.BuildSignature, &data)
 }

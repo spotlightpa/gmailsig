@@ -1,0 +1,236 @@
+<!-- Peronal info -->
+<table
+  width="100%"
+  align="center"
+  role="presentation"
+  border="0"
+  cellpadding="0"
+  cellspacing="0"
+  style="margin-top: 42px; table-layout: fixed"
+>
+  <tr>
+    <td width="140" style="width: 140px" align="left" valign="top">
+      <div
+        style="
+          overflow: hidden;
+          display: block;
+          max-width: 100%;
+          width: 105px;
+          margin-right: 32px;
+          height: 105px;
+          border: 1px solid #b6b6b6;
+          border-radius: 50%;
+        "
+      >
+        <span style="aspect-ratio: 1"
+          ><img
+            alt="Photo of {{ .Name }}"
+            title="Photo of {{ .Name }}"
+            src="{{ .ImageURL }}"
+            loading="lazy"
+            decoding="async"
+            width="105"
+            height="105"
+        /></span>
+      </div>
+    </td>
+    <td align="left" valign="top">
+      <div
+        style="
+          color: #009edb;
+          font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
+          font-size: 20px;
+          font-weight: 900;
+          line-height: 1;
+          margin-top: 12px;
+        "
+      >
+        <span style="color: #009edb"> {{ .Name }} </span>
+      </div>
+      {{ with .Role }}
+        <div
+          style="
+            line-height: 1;
+            font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            margin-top: 4px;
+            margin-bottom: 10px;
+          "
+        >
+          {{ . }} - Spotlight PA
+        </div>
+      {{ end }}
+      {{ with .Pronouns }}
+        <div
+          style="
+            line-height: 1;
+            font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
+            font-size: 12px;
+            font-weight: 300;
+            margin-top: 4px;
+            margin-bottom: 10px;
+          "
+        >
+          {{ . }}
+        </div>
+      {{ end }}
+      <div
+        style="
+          font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
+          font-size: 12px;
+          font-weight: 300;
+          line-height: 1;
+          margin-top: 18px;
+        "
+      >
+        <img
+          width="14"
+          height="11"
+          src="https://files.data.spotlightpa.org/uploads/01jf/y5f3/envelope.png"
+          style="margin-right: 4px"
+        />Email:
+        <a
+          href="mailto:{{ .Email }}"
+          style="color: #009edb; text-decoration: none"
+          target="_blank"
+        >
+          {{- .Email -}}
+        </a>
+      </div>
+      {{ with .Twitter }}
+        <div
+          style="
+            font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
+            font-size: 12px;
+            font-weight: 300;
+            line-height: 1;
+            margin-top: 4px;
+          "
+        >
+          <img
+            alt="Twitter Icon"
+            width="15"
+            height="12"
+            src="https://files.data.spotlightpa.org/uploads/01jf/y5f4/twitter.png"
+            style="margin-right: 4px"
+          />Twitter:
+          <a
+            href="https://www.twitter.com/{{ . }}"
+            style="color: #009edb; text-decoration: none"
+            target="_blank"
+            >@{{ . }}</a
+          >
+        </div>
+      {{ end }}
+      <div
+        style="
+          font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
+          font-size: 12px;
+          font-weight: 300;
+          line-height: 1;
+          margin-top: 4px;
+        "
+      >
+        <img
+          alt="Telephone Icon"
+          width="14"
+          height="14"
+          src="https://files.data.spotlightpa.org/uploads/01jf/y5f3/phone.png"
+          style="margin-right: 4px"
+        />Telephone:
+        <a
+          href="tel:+1{{ .TelephoneDigits }}"
+          style="color: #009edb; text-decoration: none"
+          target="_blank"
+          >{{ .Telephone }}</a
+        >
+      </div>
+      <div
+        style="
+          font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
+          font-size: 12px;
+          font-weight: 300;
+          line-height: 1;
+          margin-top: 4px;
+        "
+      >
+        <img
+          alt="Signal Icon"
+          width="14"
+          height="12"
+          src="https://files.data.spotlightpa.org/uploads/01jf/y5f2/comment.png"
+          style="margin-right: 4px"
+        />
+        Signal:
+        <a
+          href="https://signal.me/#p/+1{{ .SignalDigits }}"
+          style="color: #009edb; text-decoration: none"
+          target="_blank"
+          >{{ .Signal }}</a
+        >
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- Footer -->
+<table style="display: table; margin-top: 24px; width: 100%">
+  <tbody>
+    <tr style="display: table-row">
+      <td style="display: table-cell; padding-bottom: 4px">
+        <div
+          style="
+            font-family:
+              system-ui,
+              -apple-system,
+              BlinkMacSystemFont,
+              &quot;Segoe UI&quot;,
+              sans-serif;
+            font-size: 12px;
+            line-height: 1;
+            font-weight: bold;
+          "
+        >
+          <a
+            style="color: #009edb; text-decoration: none"
+            href="https://www.spotlightpa.org/"
+            target="_blank"
+            rel="noopener"
+            ><img
+              src="https://files.data.spotlightpa.org/uploads/01jf/y3ek/banner-black-on-trans-440.png"
+              alt="Spotlight PA"
+              width="220"
+              height="41"
+          /></a>
+        </div>
+      </td>
+      <td
+        style="display: table-cell; vertical-align: bottom; padding-bottom: 4px"
+      >
+        <a
+          href="https://www.spotlightpa.org/support/"
+          target="_blank"
+          rel="noopener"
+          ><img
+            src="https://files.data.spotlightpa.org/uploads/01jf/y3en/support-btn.png"
+            alt="Support"
+            width="92"
+            height="34"
+        /></a>
+      </td>
+    </tr>
+    <tr style="display: table-row">
+      <td
+        style="
+          display: table-cell;
+          padding-top: 4px;
+          font-size: 16px;
+          font-family: sans-serif;
+        "
+      >
+        Support Spotlight PA's independent, nonpartisan journalism.
+      </td>
+    </tr>
+  </tbody>
+</table>
