@@ -123,6 +123,32 @@
           >
         </div>
       {{ end }}
+      {{ with .Bluesky }}
+        <div
+          style="
+            font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
+            font-size: 12px;
+            font-weight: 300;
+            line-height: 1;
+            margin-top: 4px;
+          "
+        >
+          <img
+            alt="Bluesky Icon"
+            width="15"
+            height="12"
+            src="https://files.data.spotlightpa.org/uploads/01kt/9zwa/bluesky.png"
+            style="margin-right: 4px"
+          />Bluesky:
+          <a
+            href="https://bsky.app/profile/{{ . }}"
+            style="color: #009edb; text-decoration: none"
+            target="_blank"
+            >@{{ . }}</a
+          >
+        </div>
+      {{ end }}
+      {{ if .Telephone }}
       <div
         style="
           font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
@@ -146,6 +172,8 @@
           >{{ .Telephone }}</a
         >
       </div>
+      {{ end }}
+      {{ if .Signal }}
       <div
         style="
           font-family: Arial, &quot;Arial Narrow&quot;, sans-serif;
@@ -170,6 +198,7 @@
           >{{ .Signal }}</a
         >
       </div>
+      {{ end }}
     </td>
   </tr>
 </table>
