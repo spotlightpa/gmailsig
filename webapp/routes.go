@@ -235,6 +235,7 @@ type SigFields struct {
 	Name            string `schema:"name"`
 	Email           string `schema:"email"`
 	PhotoID         string `schema:"photoid"`
+	ProfileLink     string `schema:"profilelink"`
 	ImageURL        string `schema:"-"`
 	Role            string `schema:"role"`
 	Pronouns        string `schema:"pronouns"`

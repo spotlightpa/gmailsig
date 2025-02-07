@@ -45,7 +45,11 @@
           margin-top: 12px;
         "
       >
-        <span style="color: #009edb"> {{ .Name }} </span>
+        {{ if .ProfileLink }}
+        <a style="color: #009edb" href="{{ .ProfileLink }}" target="_blank">{{ .Name }}</a>
+        {{ else }}
+        <span style="color: #009edb">{{ .Name }}</span>
+        {{ end }}
       </div>
       {{ with .Role }}
         <div
