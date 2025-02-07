@@ -2,17 +2,4 @@
 
 Set Gmail signatures for users
 
-## Installation
-
-First install [Go](http://golang.org).
-
-If you just want to install the binary to your current directory and don't care about the source code, run
-
-```bash
-GOBIN="$(pwd)" go install github.com/spotlightpa/gmailsig@latest
-```
-
-## Screenshots
-
-```
-```
+![image](https://github.com/user-attachments/assets/3de007d9-f892-45e5-9364-b6f388caddc4)
