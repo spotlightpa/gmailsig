@@ -1,12 +1,14 @@
 package webapp
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"io"
 	"io/fs"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/carlmjohnson/requests"
@@ -150,9 +152,9 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 	decoder := schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
 	var req struct {
-		Email     string `schema:"email"`
-		Signature string `schema:"signature"`
-		CSRF      string `schema:"csrf"`
+		Account string `schema:"account"`
+		CSRF    string `schema:"csrf"`
+		SigFields
 	}
 
 	if err := decoder.Decode(&req, r.PostForm); err != nil {
@@ -166,8 +168,16 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	req.SigFields.process()
+
+	var sigBuff strings.Builder
+	if err := layouts.BuildSignature(&sigBuff, req.SigFields); err != nil {
+		app.replyHTMLErr(w, r, err)
+		return
+	}
+
 	update := gmail.SendAs{
-		Signature: req.Signature,
+		Signature: sigBuff.String(),
 	}
 	var res gmail.SendAs
 	err := requests.
@@ -186,21 +196,27 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/app/signature", http.StatusSeeOther)
 }
 
+type SigFields struct {
+	Name            string `schema:"name"`
+	Email           string `schema:"email"`
+	PhotoID         string `schema:"photoid"`
+	ImageURL        string
+	Role            string `schema:"role"`
+	Pronouns        string `schema:"pronouns"`
+	Twitter         string `schema:"twitter"`
+	Bluesky         string `schema:"bluesky"`
+	Telephone       string `schema:"telephone"`
+	TelephoneDigits string
+	Signal          string `schema:"signal"`
+	SignalDigits    string
+}
+
+func (sf *SigFields) process() {
+	sf.ImageURL = cmp.Or(sf.ImageURL, "https://files.data.spotlightpa.org/uploads/01kt/a0cx/user.png")
+}
+
 func (app *appEnv) buildSignature(w http.ResponseWriter, r *http.Request) {
-	var data struct {
-		Name            string `schema:"name"`
-		Email           string `schema:"email"`
-		PhotoID         string `schema:"photoid"`
-		ImageURL        string
-		Role            string `schema:"role"`
-		Pronouns        string `schema:"pronouns"`
-		Twitter         string `schema:"twitter"`
-		Bluesky         string `schema:"bluesky"`
-		Telephone       string `schema:"telephone"`
-		TelephoneDigits string
-		Signal          string `schema:"signal"`
-		SignalDigits    string
-	}
+	var data SigFields
 	if err := r.ParseForm(); err != nil {
 		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
 	}
@@ -210,6 +226,8 @@ func (app *appEnv) buildSignature(w http.ResponseWriter, r *http.Request) {
 		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
 		return
 	}
+	data.process()
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	app.replyHTML(w, r, layouts.BuildSignature, &data)
 }
