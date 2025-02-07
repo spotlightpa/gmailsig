@@ -46,7 +46,7 @@
   </div>
   {{ end }}
   <div class="mt-4 flex flex-wrap gap-8 justify-stretch">
-    <div class="flex-1 min-w-content">
+    <div class="flex-1 min-w-[300px]">
       <h2 class="text-xl font-bold">Update Signature</h2>
       <form
         x-ref="form"
@@ -135,27 +135,33 @@
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
-          <div class="pt-2">
+          <div class="flex flex-wrap gap-4 align-stretch pt-2">
             <button
               class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#009edb] hover:bg-[#0cb4eb] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
             >
               Set signature
             </button>
+
+            <a
+              href="https://mail.google.com/mail/u/0/#settings/general"
+              class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#009edb] hover:bg-[#0cb4eb] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
+              target="_blank"
+            >
+              Open Gmail settings
+            </a>
+
           </div>
         </div>
       </form>
     </div>
-    <div class="flex-1 min-w-content">
-      <div class="mt-2">
-        <div class="mt-2" :class="{ 'hidden': !url }">
-          <iframe
-            class="border border-black shadow w-[475px] max-w-full min-w-[300px] aspect-[475/300]"
-            :src="url"
-          >Loading…</iframe>
-        </div>
+    <div class="flex-1 min-w-[300px]">
+      <div :class="{ 'hidden': !url }">
+        <h2 class="text-xl font-bold">Preview Signature</h2>
+        <iframe
+          class="mt-4 border border-black shadow w-[475px] max-w-full aspect-[475/300]"
+          :src="url"
+        >Loading…</iframe>
       </div>
-
-
     </div>
   </div>
 </div>
