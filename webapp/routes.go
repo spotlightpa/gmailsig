@@ -254,6 +254,12 @@ func (sf *SigFields) process() {
 		b64 := base64.StdEncoding.EncodeToString([]byte(sf.PhotoID))
 		sf.ImageURL = fmt.Sprintf(`https://images.data.spotlightpa.org/insecure/rt:fill/w:210/h:210/g:ce/el:1/q:75/%s.jpeg`, b64)
 	}
+	sf.Twitter = strings.TrimPrefix(sf.Twitter, "@")
+	sf.Twitter = strings.TrimPrefix(sf.Twitter, "https://twitter.com/")
+	sf.Twitter = strings.TrimPrefix(sf.Twitter, "https://x.com/")
+	sf.Bluesky = strings.TrimPrefix(sf.Bluesky, "@")
+	sf.Bluesky = strings.TrimPrefix(sf.Bluesky, "https://bsky.app/profile/")
+
 	sf.ImageURL = cmp.Or(sf.ImageURL, "https://files.data.spotlightpa.org/uploads/01kt/a0cx/user.png")
 	sf.TelephoneDigits = notANumberRe.ReplaceAllString(sf.Telephone, "")
 	sf.SignalDigits = notANumberRe.ReplaceAllString(sf.Signal, "")
