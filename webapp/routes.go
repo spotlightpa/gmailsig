@@ -83,6 +83,8 @@ func (app *appEnv) routes() http.Handler {
 	return route
 }
 
+var photoIDRe = regexp.MustCompile(`https://images.data.spotlightpa.org/insecure/[^.]+`)
+
 func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 	cl := app.googleClient(r, gmail.GmailSettingsBasicScope)
 	if cl == nil {
@@ -116,6 +118,15 @@ func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 	var sigFields SigFields
 	sigFields.Email = sig.SendAsEmail
 	sigFields.Name = sig.DisplayName
+	if match := photoIDRe.FindString(sig.Signature); match != "" {
+		if i := strings.LastIndexByte(match, '/'); i >= 0 {
+			b64 := match[i+1:]
+			if decoded, err := base64.StdEncoding.DecodeString(b64); err == nil {
+				sigFields.PhotoID = string(decoded)
+			}
+		}
+	}
+
 	if err := r.ParseForm(); err != nil {
 		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
 	}
