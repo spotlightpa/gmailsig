@@ -83,7 +83,7 @@ func (app *appEnv) Exec() (err error) {
 	listener := gateway.ListenAndServe
 	var portStr string
 	if app.isLambda() {
-		portStr = os.Getenv("DEPLOY_PRIME_URL")
+		portStr = os.Getenv("URL")
 	} else {
 		portStr = fmt.Sprintf(":%d", app.port)
 		listener = http.ListenAndServe
@@ -107,6 +107,7 @@ func (app *appEnv) initSentry(dsn string) error {
 		Dsn:       dsn,
 		Release:   versioninfo.Revision,
 		Transport: transport,
+		ServerName: os.Getenv("URL"),
 	})
 }
 
