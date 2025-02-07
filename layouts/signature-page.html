@@ -40,7 +40,7 @@
   <h2 class="mt-4 text-xl font-bold">Current Signature</h2>
   <div class="mt-2">
     <iframe
-      class="border border-black w-[475px] max-w-full aspect-[475/300] shadow"
+      class="border border-slate-400 w-[475px] max-w-full aspect-[475/300] shadow"
       srcdoc="{{ . }}"
     ></iframe>
   </div>
@@ -76,12 +76,19 @@
           </label>
           <label>
             <p class="font-bold">Almanack Photo ID</p>
-            <p><a href="https://almanack.data.spotlightpa.org/admin/uploader">link here</a></p>
             <input
               name="photoid"
               value=""
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
+            <p class="mt-1 leading-snug">
+              Upload a square crop headshot approximately from the shoulders up with face centered into the
+              <a
+                class="text-[#009edb] underline"
+                href="https://almanack.data.spotlightpa.org/admin/uploader"
+                target="_blank"
+              >Almanack Photo Manager</a> and paste image path here. Use search feature to find existing headshots.
+            </p>
           </label>
           <label>
             <p class="font-bold">Role</p>
@@ -158,7 +165,7 @@
       <div :class="{ 'hidden': !url }">
         <h2 class="text-xl font-bold">Preview Signature</h2>
         <iframe
-          class="mt-4 border border-black shadow w-[475px] max-w-full aspect-[475/300]"
+          class="mt-4 border border-slate-400 shadow w-[475px] max-w-full aspect-[475/300]"
           :src="url"
         >Loading…</iframe>
       </div>
