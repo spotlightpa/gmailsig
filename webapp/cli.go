@@ -105,9 +105,9 @@ func (app *appEnv) initSentry(dsn string) error {
 		return nil
 	}
 	return sentry.Init(sentry.ClientOptions{
-		Dsn:       dsn,
-		Release:   versioninfo.Revision,
-		Transport: transport,
+		Dsn:        dsn,
+		Release:    versioninfo.Revision,
+		Transport:  transport,
 		ServerName: os.Getenv("SITE_ID"),
 	})
 }
