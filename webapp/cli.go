@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
@@ -82,8 +83,8 @@ type appEnv struct {
 func (app *appEnv) Exec() (err error) {
 	listener := gateway.ListenAndServe
 	var portStr string
-	if app.isLambda() {
-		portStr = os.Getenv("URL")
+	if u, _ := url.Parse(os.Getenv("URL")); app.isLambda() && u != nil {
+		portStr = u.Hostname()
 	} else {
 		portStr = fmt.Sprintf(":%d", app.port)
 		listener = http.ListenAndServe
@@ -107,7 +108,7 @@ func (app *appEnv) initSentry(dsn string) error {
 		Dsn:       dsn,
 		Release:   versioninfo.Revision,
 		Transport: transport,
-		ServerName: os.Getenv("URL"),
+		ServerName: os.Getenv("SITE_ID"),
 	})
 }
 
