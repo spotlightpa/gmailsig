@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -88,6 +89,7 @@ func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 		app.authRedirect(w, r, gmail.GmailSettingsBasicScope)
 		return
 	}
+
 	var listRes gmail.ListSendAsResponse
 	err := requests.
 		URL(`https://gmail.googleapis.com/gmail/v1/users/me/settings/sendAs?alt=json&prettyPrint=false`).
@@ -111,15 +113,30 @@ func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 		app.replyHTMLErr(w, r, errors.New("primary send-as alias not found for user"))
 		return
 	}
+	var sigFields SigFields
+	sigFields.Email = sig.SendAsEmail
+	sigFields.Name = sig.DisplayName
+	if err := r.ParseForm(); err != nil {
+		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+	}
+	decoder := schema.NewDecoder()
+	decoder.IgnoreUnknownKeys(true)
+	if err := decoder.Decode(&sigFields, r.Form); err != nil {
+		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+		return
+	}
+
 	var csrf string
 	app.getCookie(r, csrfCookie, &csrf)
 	app.replyHTML(w, r, layouts.SignaturePage, struct {
-		Title, Email, Signature, CSRF string
+		Title, Account, Signature, CSRF string
+		SigFields
 	}{
 		Title:     "Set Signature",
-		Email:     sig.SendAsEmail,
+		Account:   sig.SendAsEmail,
 		Signature: sig.Signature,
 		CSRF:      csrf,
+		SigFields: sigFields,
 	})
 }
 
@@ -195,22 +212,27 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 			resperr.WithCodeAndMessage(err, http.StatusBadGateway, "Bad response from Google"))
 		return
 	}
-	http.Redirect(w, r, "/app/signature", http.StatusSeeOther)
+	qs := make(url.Values)
+	if err := schema.NewEncoder().Encode(req.SigFields, qs); err != nil {
+		app.logErr(r.Context(), err)
+		// fallthrough
+	}
+	http.Redirect(w, r, "/app/signature?"+qs.Encode(), http.StatusSeeOther)
 }
 
 type SigFields struct {
 	Name            string `schema:"name"`
 	Email           string `schema:"email"`
 	PhotoID         string `schema:"photoid"`
-	ImageURL        string
+	ImageURL        string `schema:"-"`
 	Role            string `schema:"role"`
 	Pronouns        string `schema:"pronouns"`
 	Twitter         string `schema:"twitter"`
 	Bluesky         string `schema:"bluesky"`
 	Telephone       string `schema:"telephone"`
-	TelephoneDigits string
+	TelephoneDigits string `schema:"-"`
 	Signal          string `schema:"signal"`
-	SignalDigits    string
+	SignalDigits    string `schema:"-"`
 }
 
 var notANumberRe = regexp.MustCompile(`\D`)

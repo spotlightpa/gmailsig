@@ -25,7 +25,7 @@
 >
   <div class="flex justify-between">
     <h1 class="text-2xl text-slate-500 font-bold">
-      Gmail Signature for {{ .Email }}
+      Gmail Signature for {{ .Account }}
     </h1>
     <form class="" action="/app/logout" method="post">
       <button
@@ -54,14 +54,14 @@
         method="post"
         @input.debounce="buildURL"
       >
-        <input type="hidden" name="account" value="{{ .Email }}" />
+        <input type="hidden" name="account" value="{{ .Account }}" />
         <input type="hidden" name="csrf" value="{{ .CSRF }}" />
         <div class="flex flex-col gap-2">
           <label>
             <p class="font-bold">Name</p>
             <input
               name="name"
-              value="TODO"
+              value="{{ .Name }}"
               placeholder="William Penn"
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
@@ -78,7 +78,7 @@
             <p class="font-bold">Almanack Photo ID</p>
             <input
               name="photoid"
-              value=""
+              value="{{ .PhotoID }}"
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
             <p class="mt-1 leading-snug">
@@ -94,7 +94,7 @@
             <p class="font-bold">Role</p>
             <input
               name="role"
-              value=""
+              value="{{ .Role }}"
               placeholder="Reporter, Editor"
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
@@ -103,7 +103,7 @@
             <p class="font-bold">Pronouns</p>
             <input
               name="pronouns"
-              value=""
+              value="{{ .Pronouns }}"
               placeholder="he/him, she/her, they/them"
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
@@ -112,7 +112,7 @@
             <p class="font-bold">Twitter</p>
             <input
               name="twitter"
-              value=""
+              value="{{ .Twitter }}"
               placeholder="Username, no @ sign"
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
@@ -121,7 +121,7 @@
             <p class="font-bold">Bluesky</p>
             <input
               name="bluesky"
-              value=""
+              value="{{ .Bluesky }}"
               placeholder="User domain, no @ sign, like username.bsky.social"
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
@@ -130,7 +130,7 @@
             <p class="font-bold">Telephone</p>
             <input
               name="telephone"
-              value=""
+              value="{{ .Telephone }}"
               placeholder="(215) 555-1234"
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
@@ -139,7 +139,7 @@
             <p class="font-bold">Signal</p>
             <input
               name="signal"
-              value=""
+              value="{{ .Signal }}"
               placeholder="(215) 555-1234"
               class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
