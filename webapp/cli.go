@@ -11,6 +11,7 @@ import (
 	"github.com/carlmjohnson/flagx"
 	"github.com/carlmjohnson/gateway"
 	"github.com/earthboundkid/versioninfo/v2"
+	"github.com/spotlightpa/gmailsig/layouts"
 
 	"github.com/getsentry/sentry-go"
 )
@@ -45,6 +46,7 @@ Options:
 		fl.PrintDefaults()
 	}
 	fl.IntVar(&app.port, "port", -1, "specify a port to use http rather than AWS Lambda")
+	path := fl.String("template-dir", "", "`path` to use for local dev template reloading")
 	sentryDSN := fl.String("sentry-dsn", "", "DSN `pseudo-URL` for Sentry")
 	fl.StringVar(&app.oauthClientID, "client-id", "", "Google `Oauth client ID`")
 	fl.StringVar(&app.oauthClientSecret, "client-secret", "", "Google `Oauth client secret`")
@@ -58,6 +60,9 @@ Options:
 	app.signingSecret = []byte(*secret)
 	logger.SetPrefix(AppName + " ")
 	logger.SetFlags(log.LstdFlags | log.Lshortfile)
+	if *path != "" {
+		layouts.UseLocalTemplates(*path, logger)
+	}
 	if err := app.initSentry(*sentryDSN); err != nil {
 		return err
 	}

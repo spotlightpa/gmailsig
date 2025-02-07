@@ -3,18 +3,50 @@ package layouts
 import (
 	"embed"
 	"html/template"
+	"io"
+	"log"
+	"path/filepath"
 )
 
 //go:embed *.html
 var FS embed.FS
 
-func makeTemplate(names ...string) *template.Template {
+var path string
+
+var logger *log.Logger
+
+func UseLocalTemplates(templatedir string, l *log.Logger) {
+	path = templatedir
+	logger = l
+}
+
+func makeTemplate(names ...string) func(wr io.Writer, data any) error {
 	baseName := names[0]
-	return template.Must(
+	t := template.Must(
 		template.
 			New(baseName).
 			Funcs(nil).
 			ParseFS(FS, names...))
+
+	return func(wr io.Writer, data any) error {
+		if path == "" {
+			return t.Execute(wr, data)
+		}
+		logger.Printf("reparsing template %v", names)
+		paths := make([]string, len(names))
+		for i, name := range names {
+			paths[i] = filepath.Join(path, name)
+		}
+		var err error
+		t, err = template.
+			New(baseName).
+			Funcs(nil).
+			ParseFiles(paths...)
+		if err != nil {
+			return err
+		}
+		return t.Execute(wr, data)
+	}
 }
 
 var (

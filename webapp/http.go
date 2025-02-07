@@ -9,7 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/gob"
 	"fmt"
-	"html/template"
+	"io"
 	"net/http"
 	"time"
 
@@ -135,9 +135,9 @@ func (app *appEnv) getCookie(r *http.Request, name string, v interface{}) bool {
 	return err == nil
 }
 
-func (app *appEnv) replyHTML(w http.ResponseWriter, r *http.Request, t *template.Template, data any) {
+func (app *appEnv) replyHTML(w http.ResponseWriter, r *http.Request, t func(wr io.Writer, data any) error, data any) {
 	var buf bytes.Buffer
-	if err := t.Execute(&buf, data); err != nil {
+	if err := t(&buf, data); err != nil {
 		app.logErr(r.Context(), err)
 		app.replyHTMLErr(w, r, err)
 		return
@@ -153,7 +153,7 @@ func (app *appEnv) replyHTMLErr(w http.ResponseWriter, r *http.Request, err erro
 	app.logErr(r.Context(), err)
 	code := resperr.StatusCode(err)
 	var buf bytes.Buffer
-	if err := layouts.Error.Execute(&buf, struct {
+	if err := layouts.Error(&buf, struct {
 		Title      string
 		Status     string
 		StatusCode int
@@ -193,7 +193,7 @@ func versionMiddleware(next http.Handler) http.Handler {
 
 func (app *appEnv) isCSRFOkay(r *http.Request, userValue string) bool {
 	var want string
-	if !app.getCookie(r, csrfCookie, &want){
+	if !app.getCookie(r, csrfCookie, &want) {
 		return false
 	}
 	return subtle.ConstantTimeCompare([]byte(want), []byte(userValue)) == 1
