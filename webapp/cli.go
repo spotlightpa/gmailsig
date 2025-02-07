@@ -57,9 +57,12 @@ Options:
 	if err := flagx.ParseEnv(fl, AppName); err != nil {
 		return err
 	}
-	app.signingSecret = []byte(*secret)
 	logger.SetPrefix(AppName + " ")
 	logger.SetFlags(log.LstdFlags | log.Lshortfile)
+	app.signingSecret = []byte(*secret)
+	if *secret == "" {
+		logger.Println("WARNING: no signing-secret")
+	}
 	if *path != "" {
 		layouts.UseLocalTemplates(*path, logger)
 	}
@@ -97,7 +100,7 @@ func (app *appEnv) initSentry(dsn string) error {
 		transport = &sentry.HTTPSyncTransport{Timeout: 5 * time.Second}
 	}
 	if dsn == "" {
-		logger.Printf("no Sentry DSN")
+		logger.Println("WARNING: no Sentry DSN")
 		return nil
 	}
 	return sentry.Init(sentry.ClientOptions{
