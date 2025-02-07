@@ -2,12 +2,14 @@ package webapp
 
 import (
 	"cmp"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
 	"io/fs"
 	"net/http"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -211,8 +213,16 @@ type SigFields struct {
 	SignalDigits    string
 }
 
+var notANumberRe = regexp.MustCompile(`\D`)
+
 func (sf *SigFields) process() {
+	if sf.PhotoID != "" && !strings.HasPrefix(sf.PhotoID, "http") {
+		b64 := base64.StdEncoding.EncodeToString([]byte(sf.PhotoID))
+		sf.ImageURL = fmt.Sprintf(`https://images.data.spotlightpa.org/insecure/rt:fill/w:210/h:210/g:ce/el:1/q:75/%s.jpeg`, b64)
+	}
 	sf.ImageURL = cmp.Or(sf.ImageURL, "https://files.data.spotlightpa.org/uploads/01kt/a0cx/user.png")
+	sf.TelephoneDigits = notANumberRe.ReplaceAllString(sf.Telephone, "")
+	sf.SignalDigits = notANumberRe.ReplaceAllString(sf.Signal, "")
 }
 
 func (app *appEnv) buildSignature(w http.ResponseWriter, r *http.Request) {
