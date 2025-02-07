@@ -23,14 +23,24 @@
   class="my-8 w-full bg-white max-w-screen-lg font-sans rounded shadow p-4"
   x-data="fetcher"
 >
-  <h1 class="text-2xl text-slate-500 font-bold">
-    Gmail Signature for {{ .Email }}
-  </h1>
+  <div class="flex justify-between">
+    <h1 class="text-2xl text-slate-500 font-bold">
+      Gmail Signature for {{ .Email }}
+    </h1>
+    <form class="" action="/app/logout" method="post">
+      <button
+        class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#f00] hover:bg-[#d70000] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
+      >
+        Log&nbsp;out
+      </button>
+    </form>
+  </div>
+
   {{ with .Signature }}
   <h2 class="mt-4 text-xl font-bold">Current Signature</h2>
   <div class="mt-2">
     <iframe
-      class="border border-black w-[475px] h-[300px] shadow"
+      class="border border-black w-[475px] max-w-full aspect-[475/300] shadow"
       srcdoc="{{ . }}"
     ></iframe>
   </div>
@@ -53,7 +63,7 @@
               name="name"
               value="TODO"
               placeholder="William Penn"
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <label>
@@ -61,16 +71,16 @@
             <input
               name="email"
               value="{{ .Email }}"
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <label>
             <p class="font-bold">Almanack Photo ID</p>
-            <p>link here</p>
+            <p><a href="https://almanack.data.spotlightpa.org/admin/uploader">link here</a></p>
             <input
               name="photoid"
               value=""
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <label>
@@ -79,7 +89,7 @@
               name="role"
               value=""
               placeholder="Reporter, Editor"
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <label>
@@ -88,7 +98,7 @@
               name="pronouns"
               value=""
               placeholder="he/him, she/her, they/them"
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <label>
@@ -96,7 +106,7 @@
             <input
               name="twitter"
               value=""
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <label>
@@ -104,7 +114,7 @@
             <input
               name="bluesky"
               value=""
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <label>
@@ -113,7 +123,7 @@
               name="telephone"
               value=""
               placeholder="(215) 555-1234"
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <label>
@@ -122,7 +132,7 @@
               name="signal"
               value=""
               placeholder="(215) 555-1234"
-              class="w-full rounded border border-slate-400 py-2 pl-4 pr-7 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-black"
+              class="w-full rounded border border-slate-400 p-2 font-sans leading-normal outline-none ring-2 ring-transparent focus:ring-[#009edb]"
             />
           </label>
           <div class="pt-2">
@@ -139,7 +149,7 @@
       <div class="mt-2">
         <div class="mt-2" :class="{ 'hidden': !url }">
           <iframe
-            class="border border-black w-[475px] h-[325px] shadow"
+            class="border border-black shadow w-[475px] max-w-full min-w-[300px] aspect-[475/300]"
             :src="url"
           >Loading…</iframe>
         </div>
@@ -148,12 +158,5 @@
 
     </div>
   </div>
-  <form class="mt-8" action="/app/logout" method="post">
-    <button
-      class="px-4 py-2 appearance-none shadow hover:shadow-lg rounded bg-[#f00] hover:bg-[#d70000] focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 text-white uppercase tracking-wider"
-    >
-      Log out
-    </button>
-  </form>
 </div>
 {{ end }}
