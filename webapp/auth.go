@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"net/http"
 	"net/url"
-	"strings"
 
 	"github.com/carlmjohnson/resperr"
 	"golang.org/x/oauth2"
@@ -40,7 +39,7 @@ func (app *appEnv) googleConfig(scopes ...string) *oauth2.Config {
 func (app *appEnv) authRedirect(w http.ResponseWriter, r *http.Request, scopes ...string) {
 	app.setCookie(w, redirectURLCookie, r.URL)
 
-	stateToken := r.URL.Host + "|" + rand.Text()
+	stateToken := rand.Text()
 	app.setCookie(w, stateCookie, stateToken)
 
 	app.setCookie(w, scopesCookie, scopes)
@@ -53,16 +52,6 @@ func (app *appEnv) authRedirect(w http.ResponseWriter, r *http.Request, scopes .
 }
 
 func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
-	// Redirect if necessary for deploy previews
-	callbackState := r.FormValue("state")
-	host, _, _ := strings.Cut(callbackState, "|")
-	if host != r.URL.Host && strings.HasSuffix(host, "--gmailsig.netlify.app") {
-		u := *r.URL
-		u.Host = host
-		logger.Printf("redirecting log in to %q", host)
-		http.Redirect(w, r, u.String(), http.StatusSeeOther)
-		return
-	}
 	var state string
 	if !app.getCookie(r, stateCookie, &state) {
 		app.replyHTMLErr(w, r, resperr.New(http.StatusUnauthorized, "no saved state"))
@@ -84,7 +73,7 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	}
 	app.deleteCookie(w, scopesCookie)
 
-	if state != callbackState {
+	if callbackState := r.FormValue("state"); state != callbackState {
 		app.replyHTMLErr(w, r, resperr.New(
 			http.StatusBadRequest,
 			"token %q != %q",
