@@ -40,7 +40,7 @@ func (app *appEnv) googleConfig(scopes ...string) *oauth2.Config {
 func (app *appEnv) authRedirect(w http.ResponseWriter, r *http.Request, scopes ...string) {
 	app.setCookie(w, redirectURLCookie, r.URL)
 
-	stateToken := r.Host + "|" + rand.Text()
+	stateToken := r.URL.Host + "|" + rand.Text()
 	app.setCookie(w, stateCookie, stateToken)
 
 	app.setCookie(w, scopesCookie, scopes)
@@ -56,7 +56,7 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	// Redirect if necessary for deploy previews
 	callbackState := r.FormValue("state")
 	host, _, _ := strings.Cut(callbackState, "|")
-	if host != r.Host && strings.HasSuffix(host, "--gmailsig.netlify.app") {
+	if host != r.URL.Host && strings.HasSuffix(host, "--gmailsig.netlify.app") {
 		u := *r.URL
 		u.Host = host
 		logger.Printf("redirecting log in to %q", host)
