@@ -59,7 +59,7 @@ func (app *appEnv) routes() http.Handler {
 		})
 	}
 	mux.HandleFunc("GET /app/auth-callback", app.authCallback)
-	mux.HandleFunc("GET /app/build-signature", app.buildSignature)
+	mux.HandleFunc("GET /app/build-signature", app.buildSignaturePreview)
 	mux.HandleFunc("GET /app/healthcheck", app.healthCheck)
 	mux.HandleFunc("POST /app/logout", app.postLogout)
 	mux.HandleFunc("GET /app/sentrycheck", app.sentryCheck)
@@ -265,7 +265,7 @@ func (sf *SigFields) process() {
 	sf.SignalDigits = notANumberRe.ReplaceAllString(sf.Signal, "")
 }
 
-func (app *appEnv) buildSignature(w http.ResponseWriter, r *http.Request) {
+func (app *appEnv) buildSignaturePreview(w http.ResponseWriter, r *http.Request) {
 	var data SigFields
 	if err := r.ParseForm(); err != nil {
 		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
