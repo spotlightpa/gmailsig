@@ -50,7 +50,8 @@ func makeTemplate(names ...string) func(wr io.Writer, data any) error {
 }
 
 var (
-	Error          = makeTemplate("baseof.html", "error.html")
-	SignaturePage  = makeTemplate("baseof.html", "signature-page.html")
-	BuildSignature = makeTemplate("build-signature.html")
+	Error                 = makeTemplate("baseof.html", "error.html")
+	SignaturePage         = makeTemplate("baseof.html", "signature-page.html")
+	BuildSignature        = makeTemplate("build-signature.html")
+	BuildSignaturePreview = makeTemplate("build-signature-preview.html", "build-signature.html")
 )
