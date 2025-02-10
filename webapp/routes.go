@@ -279,5 +279,5 @@ func (app *appEnv) buildSignature(w http.ResponseWriter, r *http.Request) {
 	data.process()
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	app.replyHTML(w, r, layouts.BuildSignature, &data)
+	app.replyHTML(w, r, layouts.BuildSignaturePreview, &data)
 }
