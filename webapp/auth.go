@@ -37,7 +37,8 @@ func (app *appEnv) googleConfig(scopes ...string) *oauth2.Config {
 }
 
 func (app *appEnv) authRedirect(w http.ResponseWriter, r *http.Request, scopes ...string) {
-	app.setCookie(w, redirectURLCookie, r.URL)
+	u := *r.URL
+	app.setCookie(w, redirectURLCookie, &u)
 
 	stateToken := rand.Text()
 	app.setCookie(w, stateCookie, stateToken)
