@@ -7,7 +7,7 @@
       buildURL() {
         let params = new URLSearchParams(new FormData(this.$refs.form));
         params.delete("csrf");
-        this.url = `/app/build-signature?${params}`;
+        this.url = `/app/signature-preview?${params}`;
       },
       init() {
         this.buildURL();
