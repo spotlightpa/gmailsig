@@ -59,7 +59,7 @@ func (app *appEnv) routes() http.Handler {
 		})
 	}
 	mux.HandleFunc("GET /app/auth-callback", app.authCallback)
-	mux.HandleFunc("GET /app/build-signature", app.buildSignaturePreview)
+	mux.HandleFunc("GET /app/signature-preview", app.signaturePreview)
 	mux.HandleFunc("GET /app/healthcheck", app.healthCheck)
 	mux.HandleFunc("POST /app/logout", app.postLogout)
 	mux.HandleFunc("GET /app/sentrycheck", app.sentryCheck)
@@ -201,7 +201,7 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 	req.SigFields.process()
 
 	var sigBuff strings.Builder
-	if err := layouts.BuildSignature(&sigBuff, req.SigFields); err != nil {
+	if err := layouts.SignatureBlock(&sigBuff, req.SigFields); err != nil {
 		app.replyHTMLErr(w, r, err)
 		return
 	}
@@ -265,7 +265,7 @@ func (sf *SigFields) process() {
 	sf.SignalDigits = notANumberRe.ReplaceAllString(sf.Signal, "")
 }
 
-func (app *appEnv) buildSignaturePreview(w http.ResponseWriter, r *http.Request) {
+func (app *appEnv) signaturePreview(w http.ResponseWriter, r *http.Request) {
 	var data SigFields
 	if err := r.ParseForm(); err != nil {
 		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
@@ -279,5 +279,5 @@ func (app *appEnv) buildSignaturePreview(w http.ResponseWriter, r *http.Request)
 	data.process()
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	app.replyHTML(w, r, layouts.BuildSignaturePreview, &data)
+	app.replyHTML(w, r, layouts.SignaturePreview, &data)
 }
