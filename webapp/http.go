@@ -198,3 +198,9 @@ func (app *appEnv) isCSRFOkay(r *http.Request, userValue string) bool {
 	}
 	return subtle.ConstantTimeCompare([]byte(want), []byte(userValue)) == 1
 }
+
+func softRedirect(w http.ResponseWriter, url string) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, `<meta http-equiv="refresh" content="0; url=%s">`, html.EscapeString(url))
+}
