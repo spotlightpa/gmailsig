@@ -97,5 +97,5 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	w2 := httptest.ResponseRecorder{}
 	http.Redirect(&w2, r, redirect.Path, http.StatusSeeOther)
 	logger.Printf("%q", w2.Result().Header)
-	http.Redirect(w, r, redirect.Path, http.StatusSeeOther)
+	http.Redirect(w, r, redirect.Path+"?", http.StatusSeeOther)
 }
