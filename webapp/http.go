@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/gob"
 	"fmt"
+	"html"
 	"io"
 	"net/http"
 	"time"
@@ -142,7 +143,7 @@ func (app *appEnv) replyHTML(w http.ResponseWriter, r *http.Request, t func(wr i
 		app.replyHTMLErr(w, r, err)
 		return
 	}
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if _, err := buf.WriteTo(w); err != nil {
 		app.logErr(r.Context(), err)
 		return
@@ -167,7 +168,7 @@ func (app *appEnv) replyHTMLErr(w http.ResponseWriter, r *http.Request, err erro
 		app.logErr(r.Context(), err)
 		return
 	}
-	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(code)
 	if _, err := buf.WriteTo(w); err != nil {
 		app.logErr(r.Context(), err)
