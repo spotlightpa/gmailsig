@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/carlmjohnson/gateway"
 	"github.com/carlmjohnson/resperr"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -90,5 +91,9 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	csrf := rand.Text()
 	app.setCookie(w, csrfCookie, csrf)
 	app.setCookie(w, tokenCookie, &tok)
+	w2 := gateway.NewResponse()
+	http.Redirect(w2, r, redirect.String(), http.StatusSeeOther)
+	obj := w2.End()
+	logger.Println("obj", obj)
 	http.Redirect(w, r, redirect.String(), http.StatusSeeOther)
 }
