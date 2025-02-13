@@ -91,6 +91,7 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	csrf := rand.Text()
 	app.setCookie(w, csrfCookie, csrf)
 	app.setCookie(w, tokenCookie, &tok)
+	redirect.ForceQuery = true
 	logger.Println("redirect to", redirect.String())
-	http.Redirect(w, r, redirect.String(), http.StatusTemporaryRedirect)
+	http.Redirect(w, r, redirect.String(), http.StatusSeeOther)
 }
