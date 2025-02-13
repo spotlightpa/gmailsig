@@ -38,6 +38,7 @@ func (app *appEnv) googleConfig(scopes ...string) *oauth2.Config {
 
 func (app *appEnv) authRedirect(w http.ResponseWriter, r *http.Request, scopes ...string) {
 	u := *r.URL
+	logger.Println("current url", u)
 	app.setCookie(w, redirectURLCookie, &u)
 
 	stateToken := rand.Text()
@@ -90,5 +91,6 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	csrf := rand.Text()
 	app.setCookie(w, csrfCookie, csrf)
 	app.setCookie(w, tokenCookie, &tok)
+	logger.Println("redirect to", redirect.String())
 	http.Redirect(w, r, redirect.String(), http.StatusSeeOther)
 }
