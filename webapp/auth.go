@@ -90,5 +90,5 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	csrf := rand.Text()
 	app.setCookie(w, csrfCookie, csrf)
 	app.setCookie(w, tokenCookie, &tok)
-	http.Redirect(w, r, redirect.String(), http.StatusSeeOther)
+	http.Redirect(w, r, redirect.String(), http.StatusFound)
 }
