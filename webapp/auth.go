@@ -92,5 +92,5 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	app.setCookie(w, csrfCookie, csrf)
 	app.setCookie(w, tokenCookie, &tok)
 	logger.Println("redirect to", redirect.String())
-	http.Redirect(w, r, redirect.String(), http.StatusSeeOther)
+	http.Redirect(w, r, redirect.String(), http.StatusTemporaryRedirect)
 }
