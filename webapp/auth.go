@@ -3,6 +3,7 @@ package webapp
 import (
 	"crypto/rand"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 
 	"github.com/carlmjohnson/resperr"
@@ -92,6 +93,9 @@ func (app *appEnv) authCallback(w http.ResponseWriter, r *http.Request) {
 	app.setCookie(w, csrfCookie, csrf)
 	app.setCookie(w, tokenCookie, &tok)
 	redirect.ForceQuery = true
-	logger.Println("redirect to", redirect.String())
+
+	w2 := httptest.ResponseRecorder{}
+	http.Redirect(&w2, r, redirect.String(), http.StatusSeeOther)
+	logger.Printf("%q", w2.Result().Header)
 	http.Redirect(w, r, redirect.String(), http.StatusSeeOther)
 }
