@@ -25,10 +25,7 @@ import (
 
 func (app *appEnv) routes() http.Handler {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write(static.FourOhFour)
-	})
+	mux.HandleFunc("/", app.notFound)
 	if app.isLambda() {
 		mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 			http.ServeFileFS(w, r, static.FS, "index.html")
@@ -81,6 +78,12 @@ func (app *appEnv) routes() http.Handler {
 		Handle(route)
 	route = app.logRoute(route)
 	return route
+}
+
+func (app *appEnv) notFound(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusNotFound)
+	w.Write(static.FourOhFour)
 }
 
 var photoIDRe = regexp.MustCompile(`https://images.data.spotlightpa.org/insecure/[^.]+`)
