@@ -9,7 +9,7 @@ require (
 	github.com/carlmjohnson/flagx v0.22.2
 	github.com/carlmjohnson/gateway v1.22.2
 	github.com/carlmjohnson/requests v0.24.3
-	github.com/carlmjohnson/resperr v0.22.0
+	github.com/earthboundkid/resperr/v2 v2.25.1
 	github.com/earthboundkid/versioninfo/v2 v2.24.1
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/go-chi/chi/v5 v5.2.1
@@ -21,7 +21,6 @@ require (
 require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/aws/aws-lambda-go v1.37.0 // indirect
-	github.com/carlmjohnson/be v0.22.5 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/uuid v1.3.0 // indirect

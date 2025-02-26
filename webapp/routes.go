@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/carlmjohnson/requests"
-	"github.com/carlmjohnson/resperr"
+	"github.com/earthboundkid/resperr/v2"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/gorilla/schema"
 	"github.com/spotlightpa/gmailsig/layouts"
@@ -103,7 +103,7 @@ func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 		Fetch(r.Context())
 	if err != nil {
 		app.replyHTMLErr(w, r,
-			resperr.WithCodeAndMessage(err, http.StatusBadGateway, "Bad response from Google"))
+			resperr.E{E: err, S: http.StatusBadGateway, M: "Bad response from Google"})
 		return
 	}
 
@@ -131,12 +131,12 @@ func (app *appEnv) signaturePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseForm(); err != nil {
-		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+		app.replyHTMLErr(w, r, resperr.E{E: err, S: http.StatusBadRequest})
 	}
 	decoder := schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
 	if err := decoder.Decode(&sigFields, r.Form); err != nil {
-		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+		app.replyHTMLErr(w, r, resperr.E{E: err, S: http.StatusBadRequest})
 		return
 	}
 
@@ -180,7 +180,7 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := r.ParseForm(); err != nil {
-		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+		app.replyHTMLErr(w, r, resperr.E{E: err, S: http.StatusBadRequest})
 	}
 	decoder := schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
@@ -191,12 +191,12 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := decoder.Decode(&req, r.PostForm); err != nil {
-		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+		app.replyHTMLErr(w, r, resperr.E{E: err, S: http.StatusBadRequest})
 		return
 	}
 	if !app.isCSRFOkay(r, req.CSRF) {
 		err := fmt.Errorf("bad CSRF token: %q", req.CSRF)
-		err = resperr.WithCodeAndMessage(err, http.StatusBadRequest, "Log in information is stale. Please log in again.")
+		err = resperr.E{E: err, S: http.StatusBadRequest, M: "Log in information is stale. Please log in again."}
 		app.replyHTMLErr(w, r, err)
 		return
 	}
@@ -223,7 +223,7 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 		Fetch(r.Context())
 	if err != nil {
 		app.replyHTMLErr(w, r,
-			resperr.WithCodeAndMessage(err, http.StatusBadGateway, "Bad response from Google"))
+			resperr.E{E: err, S: http.StatusBadGateway, M: "Bad response from Google"})
 		return
 	}
 	qs := make(url.Values)
@@ -271,12 +271,12 @@ func (sf *SigFields) process() {
 func (app *appEnv) signaturePreview(w http.ResponseWriter, r *http.Request) {
 	var data SigFields
 	if err := r.ParseForm(); err != nil {
-		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+		app.replyHTMLErr(w, r, resperr.E{E: err, S: http.StatusBadRequest})
 	}
 	decoder := schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
 	if err := decoder.Decode(&data, r.Form); err != nil {
-		app.replyHTMLErr(w, r, resperr.WithStatusCode(err, http.StatusBadRequest))
+		app.replyHTMLErr(w, r, resperr.E{E: err, S: http.StatusBadRequest})
 		return
 	}
 	data.process()

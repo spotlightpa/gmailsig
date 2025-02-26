@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/carlmjohnson/resperr"
+	"github.com/earthboundkid/resperr/v2"
 	"github.com/earthboundkid/versioninfo/v2"
 	"github.com/getsentry/sentry-go"
 	"github.com/go-chi/chi/v5/middleware"
