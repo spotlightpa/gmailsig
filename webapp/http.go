@@ -25,13 +25,6 @@ func (app *appEnv) logRoute(h http.Handler) http.Handler {
 	return middleware.RequestLogger(&middleware.DefaultLogFormatter{Logger: logger})(h)
 }
 
-func (app *appEnv) replyErr(w http.ResponseWriter, r *http.Request, err error) {
-	app.logErr(r.Context(), err)
-	code := resperr.StatusCode(err)
-	msg := resperr.UserMessage(err)
-	http.Error(w, msg, code)
-}
-
 func (app *appEnv) logErr(ctx context.Context, err error) {
 	if hub := sentry.GetHubFromContext(ctx); hub != nil {
 		hub.CaptureException(err)
