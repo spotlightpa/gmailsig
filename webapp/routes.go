@@ -78,9 +78,9 @@ func (app *appEnv) routes() http.Handler {
 		Handle(route)
 	route = app.logRoute(route)
 
-	csrf := http.NewCrossOriginProtection()
-	csrf.SetDenyHandler(http.HandlerFunc(app.badCSRF))
-	route = csrf.Handler(route)
+	app.csrfMid = http.NewCrossOriginProtection()
+	app.csrfMid.SetDenyHandler(http.HandlerFunc(app.badCSRF))
+	route = app.csrfMid.Handler(route)
 	return route
 }
 
@@ -290,6 +290,6 @@ func (app *appEnv) signaturePreview(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *appEnv) badCSRF(w http.ResponseWriter, r *http.Request) {
-	err := resperr.E{E: http.NewCrossOriginProtection().Check(r), S: http.StatusForbidden, M: "Suspicious request."}
+	err := resperr.E{E: app.csrfMid.Check(r), S: http.StatusForbidden, M: "Suspicious request."}
 	app.replyHTMLErr(w, r, err)
 }
