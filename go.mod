@@ -1,8 +1,6 @@
 module github.com/spotlightpa/gmailsig
 
-go 1.24
-
-toolchain go1.24.0
+go 1.25
 
 require (
 	github.com/carlmjohnson/exitcode v0.20.2
