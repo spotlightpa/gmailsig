@@ -9,8 +9,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/carlmjohnson/flagx"
 	"github.com/carlmjohnson/gateway"
+	"github.com/earthboundkid/flagx/v2"
 	"github.com/earthboundkid/versioninfo/v2"
 	"github.com/spotlightpa/gmailsig/layouts"
 
