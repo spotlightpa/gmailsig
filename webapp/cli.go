@@ -78,6 +78,7 @@ type appEnv struct {
 	oauthClientID     string
 	oauthClientSecret string
 	signingSecret     []byte
+	csrfMid           *http.CrossOriginProtection
 }
 
 func (app *appEnv) Exec() (err error) {
