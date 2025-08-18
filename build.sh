@@ -9,5 +9,5 @@ cd "$THIS_DIR"
 
 shopt -s extglob # Enable negative globbing
 cp static/!(*.go) public
-LDFLAGS="-linkmode external -extldflags \"-static\""
+LDFLAGS="-linkmode external -extldflags -static"
 go build -o functions/gmailsig -ldflags "$LDFLAGS" .
