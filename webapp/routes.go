@@ -77,6 +77,10 @@ func (app *appEnv) routes() http.Handler {
 		}).
 		Handle(route)
 	route = app.logRoute(route)
+
+	csrf := http.NewCrossOriginProtection()
+	csrf.SetDenyHandler(http.HandlerFunc(app.badCSRF))
+	route = csrf.Handler(route)
 	return route
 }
 
@@ -194,6 +198,7 @@ func (app *appEnv) postSignature(w http.ResponseWriter, r *http.Request) {
 		app.replyHTMLErr(w, r, resperr.E{E: err, S: http.StatusBadRequest})
 		return
 	}
+	// Obsoleted by http.CrossOriginProtection in Go 1.25, but not worth removing.
 	if !app.isCSRFOkay(r, req.CSRF) {
 		err := fmt.Errorf("bad CSRF token: %q", req.CSRF)
 		err = resperr.E{E: err, S: http.StatusBadRequest, M: "Log in information is stale. Please log in again."}
@@ -282,4 +287,9 @@ func (app *appEnv) signaturePreview(w http.ResponseWriter, r *http.Request) {
 	data.process()
 
 	app.replyHTML(w, r, layouts.SignaturePreview, &data)
+}
+
+func (app *appEnv) badCSRF(w http.ResponseWriter, r *http.Request) {
+	err := resperr.E{E: http.NewCrossOriginProtection().Check(r), S: http.StatusForbidden, M: "Suspicious request."}
+	app.replyHTMLErr(w, r, err)
 }
